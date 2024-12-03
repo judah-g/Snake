@@ -21,6 +21,10 @@ namespace Snake
         private SpriteBatch _spriteBatch;
 
         List<Snake> snakes = new List<Snake>();
+        Texture2D snakeTexture;
+
+        float timer;
+        KeyboardState keyboardState;
 
         public Game1()
         {
@@ -31,16 +35,25 @@ namespace Snake
 
         protected override void Initialize()
         {
-            Console.SetWindowSize(800, 496);
+            _graphics.PreferredBackBufferWidth = 800;
+            _graphics.PreferredBackBufferHeight = 496;
+            _graphics.ApplyChanges();
 
             base.Initialize();
+
+            for (int i = 0; i < 3; i++)
+            {
+                snakes.Add(new Snake(snakeTexture, new Rectangle(160 - i*16, 160, 16, 16), Direction.Right, (float)0.3));
+            }
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            snakeTexture = Content.Load<Texture2D>("snakebody");
+            for (int i = 0;i < snakes.Count; i++)
+                snakes[i].Texture = snakeTexture;
         }
 
         protected override void Update(GameTime gameTime)
@@ -48,7 +61,36 @@ namespace Snake
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            Window.Title = snakes[0].PreviousDirection.ToString();
+            keyboardState = Keyboard.GetState();
+
+            //movement
+
+            if (keyboardState.IsKeyDown(Keys.W))
+                snakes[0].Direction = Direction.Up;
+            else if (keyboardState.IsKeyDown(Keys.S))
+                snakes[0].Direction = Direction.Down;
+            else if (keyboardState.IsKeyDown(Keys.A))
+                snakes[0].Direction = Direction.Left;
+            else if (keyboardState.IsKeyDown(Keys.D))
+                snakes[0].Direction = Direction.Right;
+
+            for (int i = 0; i < snakes.Count; i++)
+            {
+                snakes[i].Update(timer);
+                if (i != snakes.Count - 1)
+                    snakes[i + 1].Direction = snakes[i].PreviousDirection;
+            }
+
+            if (timer >= snakes[0].Speed)
+            {
+                timer -= snakes[0].Speed;
+                for (int i = 0; i < snakes.Count; i++)
+                {
+                    snakes[i].PreviousDirection = snakes[i].Direction;
+                }
+            }
+            timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             base.Update(gameTime);
         }
@@ -57,7 +99,12 @@ namespace Snake
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            _spriteBatch.Begin();
+
+            for (int i = 0; i < snakes.Count; i++)
+                snakes[i].Draw(_spriteBatch);
+
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
