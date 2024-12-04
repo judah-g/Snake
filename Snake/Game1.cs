@@ -66,13 +66,13 @@ namespace Snake
 
             //movement
 
-            if (keyboardState.IsKeyDown(Keys.W))
+            if (keyboardState.IsKeyDown(Keys.W) && snakes[0].Direction != Direction.Down)
                 snakes[0].Direction = Direction.Up;
-            else if (keyboardState.IsKeyDown(Keys.S))
+            else if (keyboardState.IsKeyDown(Keys.S) && snakes[0].Direction != Direction.Up)
                 snakes[0].Direction = Direction.Down;
-            else if (keyboardState.IsKeyDown(Keys.A))
+            else if (keyboardState.IsKeyDown(Keys.A) && snakes[0].Direction != Direction.Right)
                 snakes[0].Direction = Direction.Left;
-            else if (keyboardState.IsKeyDown(Keys.D))
+            else if (keyboardState.IsKeyDown(Keys.D) && snakes[0].Direction != Direction.Left)
                 snakes[0].Direction = Direction.Right;
 
             for (int i = 0; i < snakes.Count; i++)

@@ -13,7 +13,7 @@ namespace Snake
         private Rectangle _rect;
         private Texture2D _texture;
         private Direction _direction, _prevDirection;
-        private float _speed;
+        private float _speed, _rotation;
 
         public Snake(Texture2D texture, Rectangle rect, Direction direction, float speed) 
         { 
@@ -46,7 +46,8 @@ namespace Snake
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_texture, _rect, Color.White);
+            spriteBatch.Draw(_texture, _rect, null,Color.White, _rotation, 
+                new Vector2(_texture.Width / 2, _texture.Height / 2), SpriteEffects.None, 0f);
         }
 
         public void Update(float timer)
@@ -62,6 +63,15 @@ namespace Snake
                else if (_direction == Direction.Down)
                     _rect.Y += _rect.Height;
             }
+
+            if (_prevDirection == Direction.Up)
+                _rotation = -1.5708f;
+            else if (_prevDirection == Direction.Down)
+                _rotation = 1.5708f;
+            else if (_prevDirection == Direction.Right)
+                _rotation = 0;
+            else if (_prevDirection == Direction.Left)
+                _rotation = (float)Math.PI;
         }
     }
 }
