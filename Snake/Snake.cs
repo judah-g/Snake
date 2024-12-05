@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Linq;
@@ -44,13 +44,16 @@ namespace Snake
         public float Speed
         { get { return _speed; } }
 
+        public Rectangle Rectangle
+        { get { return _rect; } }
+
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(_texture, _rect, null,Color.White, _rotation, 
                 new Vector2(_texture.Width / 2, _texture.Height / 2), SpriteEffects.None, 0f);
         }
 
-        public void Update(float timer)
+        public void Update(float timer, Fruit fruit, List<Snake> snakes, GraphicsDeviceManager graphics)
         {
             if (timer >= _speed)
             {
@@ -72,6 +75,9 @@ namespace Snake
                 _rotation = 0;
             else if (_prevDirection == Direction.Left)
                 _rotation = (float)Math.PI;
+
+            if (_rect.Intersects(fruit.Rectangle))
+            { fruit.Eat(snakes, graphics); }
         }
     }
 }
