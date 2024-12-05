@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -22,6 +22,9 @@ namespace Snake
 
         List<Snake> snakes = new List<Snake>();
         Texture2D snakeTexture;
+
+        Fruit fruit = new Fruit(new Rectangle(640, 320, 16, 16), null);
+        Texture2D fruitTexture;
 
         float timer;
         KeyboardState keyboardState;
@@ -54,6 +57,9 @@ namespace Snake
             snakeTexture = Content.Load<Texture2D>("snakebody");
             for (int i = 0;i < snakes.Count; i++)
                 snakes[i].Texture = snakeTexture;
+
+            fruitTexture = Content.Load<Texture2D>("cherry");
+            fruit.Texture = fruitTexture;
         }
 
         protected override void Update(GameTime gameTime)
@@ -77,7 +83,7 @@ namespace Snake
 
             for (int i = 0; i < snakes.Count; i++)
             {
-                snakes[i].Update(timer);
+                snakes[i].Update(timer, fruit, snakes, _graphics);
                 if (i != snakes.Count - 1)
                     snakes[i + 1].Direction = snakes[i].PreviousDirection;
             }
@@ -103,6 +109,8 @@ namespace Snake
 
             for (int i = 0; i < snakes.Count; i++)
                 snakes[i].Draw(_spriteBatch);
+
+            fruit.Draw(_spriteBatch);
 
             _spriteBatch.End();
 
