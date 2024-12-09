@@ -13,14 +13,16 @@ namespace Snake
     {
         private Rectangle _rect;
         private Texture2D _texture;
-        private Random _random;
+        private Random _random = new Random();
         private Vector2 _helper;
         private bool _empty;
+        private Pixel _pixel;
 
-        public Fruit(Rectangle rect, Texture2D texture)
+        public Fruit(Rectangle rect, Texture2D texture, Pixel pixel)
         {
             _rect = rect; 
             _texture = texture;
+            _pixel = pixel;
         }
 
         public Rectangle Rectangle
@@ -37,14 +39,17 @@ namespace Snake
             _empty = false;
             while (_empty == false)
             {
-                _helper = new Vector2(_random.Next(graphics.PreferredBackBufferWidth / 16), _random.Next(graphics.PreferredBackBufferHeight));
+                _helper = new Vector2(_random.Next(graphics.PreferredBackBufferWidth / _pixel.Width), _random.Next(graphics.PreferredBackBufferHeight / _pixel.Width));
+                _empty = true;
                 for (int i = 0; i < snakes.Count; i++)
                 {
-                    if (!snakes[i].Rectangle.Contains(_helper))
-                        _empty = true;
+                    if (snakes[i].Rectangle.Contains(_helper))
+                        _empty = false;
                 }
             }
-            _rect = new Rectangle((int)_helper.X, (int)_helper.Y, 16, 16);
+            _rect = new Rectangle((int)_helper.X * _pixel.Width, (int)_helper.Y * _pixel.Width, _pixel.Width, _pixel.Width);
+
+            snakes[0].NeedsToGrow = true;
         }
 
         public void Draw(SpriteBatch spriteBatch)

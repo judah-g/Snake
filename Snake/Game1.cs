@@ -20,10 +20,13 @@ namespace Snake
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        // max is 32
+        Pixel pixel = new Pixel(32);
+
         List<Snake> snakes = new List<Snake>();
         Texture2D snakeTexture;
 
-        Fruit fruit = new Fruit(new Rectangle(640, 320, 16, 16), null);
+        Fruit fruit;
         Texture2D fruitTexture;
 
         float timer;
@@ -38,15 +41,15 @@ namespace Snake
 
         protected override void Initialize()
         {
-            _graphics.PreferredBackBufferWidth = 800;
-            _graphics.PreferredBackBufferHeight = 496;
+            _graphics.PreferredBackBufferWidth = pixel.Width * (800 / pixel.Width);
+            _graphics.PreferredBackBufferHeight = pixel.Width * (512 / pixel.Width);
             _graphics.ApplyChanges();
 
             base.Initialize();
 
             for (int i = 0; i < 3; i++)
             {
-                snakes.Add(new Snake(snakeTexture, new Rectangle(160 - i*16, 160, 16, 16), Direction.Right, (float)0.3));
+                snakes.Add(new Snake(snakeTexture, new Rectangle(pixel.Width * (160 / pixel.Width) - i * pixel.Width, pixel.Width * (160 / pixel.Width), pixel.Width, pixel.Width), Direction.Right, (float)0.3, pixel));
             }
         }
 
@@ -59,7 +62,7 @@ namespace Snake
                 snakes[i].Texture = snakeTexture;
 
             fruitTexture = Content.Load<Texture2D>("cherry");
-            fruit.Texture = fruitTexture;
+            fruit = new Fruit(new Rectangle(pixel.Width * (640 / pixel.Width), pixel.Width * (320 / pixel.Width), pixel.Width, pixel.Width), fruitTexture, pixel);
         }
 
         protected override void Update(GameTime gameTime)
@@ -67,7 +70,6 @@ namespace Snake
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            Window.Title = snakes[0].PreviousDirection.ToString();
             keyboardState = Keyboard.GetState();
 
             //movement
@@ -96,6 +98,7 @@ namespace Snake
                     snakes[i].PreviousDirection = snakes[i].Direction;
                 }
             }
+
             timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             base.Update(gameTime);

@@ -14,13 +14,17 @@ namespace Snake
         private Texture2D _texture;
         private Direction _direction, _prevDirection;
         private float _speed, _rotation;
+        private Pixel _pixel;
 
-        public Snake(Texture2D texture, Rectangle rect, Direction direction, float speed) 
+        private bool _needsToGrow;
+
+        public Snake(Texture2D texture, Rectangle rect, Direction direction, float speed, Pixel pixel) 
         { 
             _texture = texture;
             _rect = rect;
             _direction = direction;
             _speed = speed;
+            _pixel = pixel;
         }
 
         public Texture2D Texture
@@ -47,10 +51,16 @@ namespace Snake
         public Rectangle Rectangle
         { get { return _rect; } }
 
+        public bool NeedsToGrow
+        {
+            get { return _needsToGrow; }
+            set { _needsToGrow = value; }
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_texture, _rect, null,Color.White, _rotation, 
-                new Vector2(_texture.Width / 2, _texture.Height / 2), SpriteEffects.None, 0f);
+            spriteBatch.Draw(_texture, new Rectangle(_rect.X + (_pixel.Width / 2), _rect.Y + (_pixel.Width / 2), _pixel.Width, _pixel.Width), 
+                null,Color.White, _rotation, new Vector2(_texture.Width / 2, _texture.Height / 2), SpriteEffects.None, 0f);
         }
 
         public void Update(float timer, Fruit fruit, List<Snake> snakes, GraphicsDeviceManager graphics)
@@ -78,6 +88,30 @@ namespace Snake
 
             if (_rect.Intersects(fruit.Rectangle))
             { fruit.Eat(snakes, graphics); }
+
+            if (snakes[0].NeedsToGrow && timer >= _speed)
+            {
+                if (snakes[^1].PreviousDirection == Direction.Right)
+                {
+                    snakes.Add(new Snake(snakes[0].Texture, new Rectangle(snakes[^1].Rectangle.X - _pixel.Width, snakes[^1].Rectangle.Y, _pixel.Width, _pixel.Width),
+                        Direction.Right, snakes[0].Speed, _pixel));
+                }
+                else if (snakes[^1].PreviousDirection == Direction.Left)
+                {
+                    snakes.Add(new Snake(snakes[0].Texture, new Rectangle(snakes[^1].Rectangle.X + _pixel.Width, snakes[^1].Rectangle.Y, _pixel.Width, _pixel.Width),
+                        Direction.Right, snakes[0].Speed, _pixel));
+                }
+                else if (snakes[^1].PreviousDirection == Direction.Up)
+                {
+                    snakes.Add(new Snake(snakes[0].Texture, new Rectangle(snakes[^1].Rectangle.X, snakes[^1].Rectangle.Y - _pixel.Width, _pixel.Width, _pixel.Width),
+                        Direction.Right, snakes[0].Speed, _pixel));
+                }
+                else if (snakes[^1].PreviousDirection == Direction.Down)
+                {
+                    snakes.Add(new Snake(snakes[0].Texture, new Rectangle(snakes[^1].Rectangle.X, snakes[^1].Rectangle.Y + _pixel.Width, _pixel.Width, _pixel.Width),
+                        Direction.Right, snakes[0].Speed, _pixel));
+                }
+            }
         }
     }
 }
