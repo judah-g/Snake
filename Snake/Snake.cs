@@ -65,6 +65,7 @@ namespace Snake
 
         public void Update(float timer, Fruit fruit, List<Snake> snakes, GraphicsDeviceManager graphics)
         {
+            //mvement
             if (timer >= _speed)
             {
                if (_direction == Direction.Right)
@@ -86,6 +87,10 @@ namespace Snake
             else if (_prevDirection == Direction.Left)
                 _rotation = (float)Math.PI;
 
+            //collision
+            //if (snakes[0].Rectangle.Top < 0 || snakes[0].Rectangle.Bottom > graphics.PreferredBackBufferHeight)
+
+            //growing
             if (_rect.Intersects(fruit.Rectangle))
             { fruit.Eat(snakes, graphics); }
 
@@ -103,14 +108,15 @@ namespace Snake
                 }
                 else if (snakes[^1].PreviousDirection == Direction.Up)
                 {
-                    snakes.Add(new Snake(snakes[0].Texture, new Rectangle(snakes[^1].Rectangle.X, snakes[^1].Rectangle.Y - _pixel.Width, _pixel.Width, _pixel.Width),
+                    snakes.Add(new Snake(snakes[0].Texture, new Rectangle(snakes[^1].Rectangle.X, snakes[^1].Rectangle.Y + _pixel.Width, _pixel.Width, _pixel.Width),
                         Direction.Right, snakes[0].Speed, _pixel));
                 }
                 else if (snakes[^1].PreviousDirection == Direction.Down)
                 {
-                    snakes.Add(new Snake(snakes[0].Texture, new Rectangle(snakes[^1].Rectangle.X, snakes[^1].Rectangle.Y + _pixel.Width, _pixel.Width, _pixel.Width),
+                    snakes.Add(new Snake(snakes[0].Texture, new Rectangle(snakes[^1].Rectangle.X, snakes[^1].Rectangle.Y - _pixel.Width, _pixel.Width, _pixel.Width),
                         Direction.Right, snakes[0].Speed, _pixel));
                 }
+                snakes[0].NeedsToGrow = false;
             }
         }
     }

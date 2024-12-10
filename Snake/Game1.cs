@@ -49,7 +49,7 @@ namespace Snake
 
             for (int i = 0; i < 3; i++)
             {
-                snakes.Add(new Snake(snakeTexture, new Rectangle(pixel.Width * (160 / pixel.Width) - i * pixel.Width, pixel.Width * (160 / pixel.Width), pixel.Width, pixel.Width), Direction.Right, (float)0.3, pixel));
+                snakes.Add(new Snake(snakeTexture, new Rectangle(pixel.Width * (160 / pixel.Width) - i * pixel.Width, pixel.Width * (160 / pixel.Width), pixel.Width, pixel.Width), Direction.Right, (float)0.25, pixel));
             }
         }
 
