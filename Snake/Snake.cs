@@ -57,15 +57,20 @@ namespace Snake
             set { _needsToGrow = value; }
         }
 
+        public void Death(Screen screen)
+        {
+            screen = Screen.Death;
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(_texture, new Rectangle(_rect.X + (_pixel.Width / 2), _rect.Y + (_pixel.Width / 2), _pixel.Width, _pixel.Width), 
                 null,Color.White, _rotation, new Vector2(_texture.Width / 2, _texture.Height / 2), SpriteEffects.None, 0f);
         }
 
-        public void Update(float timer, Fruit fruit, List<Snake> snakes, GraphicsDeviceManager graphics)
+        public void Update(float timer, Fruit fruit, List<Snake> snakes, GraphicsDeviceManager graphics, Screen screen)
         {
-            //mvement
+            //movement
             if (timer >= _speed)
             {
                if (_direction == Direction.Right)
@@ -88,7 +93,16 @@ namespace Snake
                 _rotation = (float)Math.PI;
 
             //collision
-            //if (snakes[0].Rectangle.Top < 0 || snakes[0].Rectangle.Bottom > graphics.PreferredBackBufferHeight)
+            if (snakes[0].Rectangle.Top < 0 || snakes[0].Rectangle.Bottom > graphics.PreferredBackBufferHeight)
+                Death(screen);
+            for (int i = 0; i < snakes.Count; i++)
+            {
+                for (int j = 0; j < snakes.Count; j++)
+                {
+                    if (i != j && snakes[i].Rectangle.Intersects(snakes[j].Rectangle))
+                        Death(screen);
+                }
+            }
 
             //growing
             if (_rect.Intersects(fruit.Rectangle))

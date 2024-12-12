@@ -13,6 +13,13 @@ public enum Direction
     Down
 }
 
+public enum Screen
+{
+    Intro,
+    Main,
+    Death
+}
+
 namespace Snake
 {
     public class Game1 : Game
@@ -31,6 +38,7 @@ namespace Snake
 
         float timer;
         KeyboardState keyboardState;
+        Screen screen = Screen.Main;
 
         public Game1()
         {
@@ -72,30 +80,31 @@ namespace Snake
 
             keyboardState = Keyboard.GetState();
 
-            //movement
-
-            if (keyboardState.IsKeyDown(Keys.W) && snakes[0].Direction != Direction.Down)
-                snakes[0].Direction = Direction.Up;
-            else if (keyboardState.IsKeyDown(Keys.S) && snakes[0].Direction != Direction.Up)
-                snakes[0].Direction = Direction.Down;
-            else if (keyboardState.IsKeyDown(Keys.A) && snakes[0].Direction != Direction.Right)
-                snakes[0].Direction = Direction.Left;
-            else if (keyboardState.IsKeyDown(Keys.D) && snakes[0].Direction != Direction.Left)
-                snakes[0].Direction = Direction.Right;
-
-            for (int i = 0; i < snakes.Count; i++)
+            if (screen == Screen.Main)
             {
-                snakes[i].Update(timer, fruit, snakes, _graphics);
-                if (i != snakes.Count - 1)
-                    snakes[i + 1].Direction = snakes[i].PreviousDirection;
-            }
+                if (keyboardState.IsKeyDown(Keys.W) && snakes[0].Direction != Direction.Down)
+                    snakes[0].Direction = Direction.Up;
+                else if (keyboardState.IsKeyDown(Keys.S) && snakes[0].Direction != Direction.Up)
+                    snakes[0].Direction = Direction.Down;
+                else if (keyboardState.IsKeyDown(Keys.A) && snakes[0].Direction != Direction.Right)
+                    snakes[0].Direction = Direction.Left;
+                else if (keyboardState.IsKeyDown(Keys.D) && snakes[0].Direction != Direction.Left)
+                    snakes[0].Direction = Direction.Right;
 
-            if (timer >= snakes[0].Speed)
-            {
-                timer -= snakes[0].Speed;
                 for (int i = 0; i < snakes.Count; i++)
                 {
-                    snakes[i].PreviousDirection = snakes[i].Direction;
+                    snakes[i].Update(timer, fruit, snakes, _graphics, screen);
+                    if (i != snakes.Count - 1)
+                        snakes[i + 1].Direction = snakes[i].PreviousDirection;
+                }
+
+                if (timer >= snakes[0].Speed)
+                {
+                    timer -= snakes[0].Speed;
+                    for (int i = 0; i < snakes.Count; i++)
+                    {
+                        snakes[i].PreviousDirection = snakes[i].Direction;
+                    }
                 }
             }
 
@@ -110,10 +119,13 @@ namespace Snake
 
             _spriteBatch.Begin();
 
-            for (int i = 0; i < snakes.Count; i++)
-                snakes[i].Draw(_spriteBatch);
+            if (screen == Screen.Main)
+            {
+                for (int i = 0; i < snakes.Count; i++)
+                    snakes[i].Draw(_spriteBatch);
 
-            fruit.Draw(_spriteBatch);
+                fruit.Draw(_spriteBatch);
+            }
 
             _spriteBatch.End();
 
