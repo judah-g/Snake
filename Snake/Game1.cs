@@ -91,6 +91,17 @@ namespace Snake
                 else if (keyboardState.IsKeyDown(Keys.D) && snakes[0].Direction != Direction.Left)
                     snakes[0].Direction = Direction.Right;
 
+                if (snakes[0].Rectangle.Top < 0 || snakes[0].Rectangle.Bottom > _graphics.PreferredBackBufferHeight)
+                    screen = Screen.Death;
+                for (int i = 0; i < snakes.Count; i++)
+                {
+                    for (int j = 0; j < snakes.Count; j++)
+                    {
+                        if (i != j && snakes[i].Rectangle.Intersects(snakes[j].Rectangle))
+                            screen = Screen.Death;
+                    }
+                }
+
                 for (int i = 0; i < snakes.Count; i++)
                 {
                     snakes[i].Update(timer, fruit, snakes, _graphics, screen);
