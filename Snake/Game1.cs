@@ -38,7 +38,9 @@ namespace Snake
 
         float timer;
         KeyboardState keyboardState;
+        MouseState mouseState;
         Screen screen = Screen.Main;
+        Texture2D startScreenTexture, deathScreenTexture;
 
         public Game1()
         {
@@ -71,6 +73,9 @@ namespace Snake
 
             fruitTexture = Content.Load<Texture2D>("cherry");
             fruit = new Fruit(new Rectangle(pixel.Width * (640 / pixel.Width), pixel.Width * (320 / pixel.Width), pixel.Width, pixel.Width), fruitTexture, pixel);
+
+            startScreenTexture = Content.Load<Texture2D>("start");
+            deathScreenTexture = Content.Load<Texture2D>("death");
         }
 
         protected override void Update(GameTime gameTime)
@@ -137,6 +142,12 @@ namespace Snake
 
                 fruit.Draw(_spriteBatch);
             }
+
+            else if (screen == Screen.Intro)
+                _spriteBatch.Draw(startScreenTexture, new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight), Color.White);
+
+            else if (screen == Screen.Death)
+                _spriteBatch.Draw(deathScreenTexture, new Rectangle(0, 0, _graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight), Color.White);
 
             _spriteBatch.End();
 
