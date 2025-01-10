@@ -39,7 +39,7 @@ namespace Snake
         float timer;
         KeyboardState keyboardState;
         MouseState mouseState;
-        Screen screen = Screen.Main;
+        Screen screen = Screen.Intro;
         Texture2D startScreenTexture, deathScreenTexture;
 
         public Game1()
@@ -84,6 +84,7 @@ namespace Snake
                 Exit();
 
             keyboardState = Keyboard.GetState();
+            mouseState = Mouse.GetState();
 
             if (screen == Screen.Main)
             {
@@ -123,6 +124,13 @@ namespace Snake
                     }
                 }
             }
+
+            if (screen == Screen.Death || screen == Screen.Intro)
+            {
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                    screen = Screen.Main;
+            }
+
 
             timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
